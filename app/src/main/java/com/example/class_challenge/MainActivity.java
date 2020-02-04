@@ -15,10 +15,9 @@ public class MainActivity extends AppCompatActivity {
 
     private ObjectAnimator bottomToTop, topToBottom,lftToRgt,rgtToLft;
     private View view;
-    private float screenHieght;
-    private float screenWidth;
+    private float scrnHeight;
+    private float scrnWidth;
     private  AnimatorSet animatorSet;//required to set the sequence
-    Button tenX, twoX,halfX;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,59 +27,52 @@ public class MainActivity extends AppCompatActivity {
         Point point=new Point();
         display.getSize(point);
         final float hieght = point.y; // screen height
-        screenHieght = hieght-250;
+        scrnHeight = hieght-250;
         final float width = point.x; // screen width
-        screenWidth = width-60;
+        scrnWidth = width-60;
 
-       initializeUI();
+       initUI();
 
     animateTopBottom(10000);
-
-
-
 
 }
 
 
+    void animateTopBottom(long i){
+
+        topToBottom = ObjectAnimator.ofFloat(view,"translationY",0f, scrnHeight)
+                .setDuration(i);
+        bottomToTop = ObjectAnimator.ofFloat(view,"translationY", scrnHeight,0f )
+                .setDuration(i);
+        animatorSet.play(topToBottom).before(bottomToTop);
+        animatorSet.start();
+
+    }
 
 
+    void animateLeftRight(){
 
-    void initializeUI(){
+        lftToRgt = ObjectAnimator.ofFloat(view,"translationX",0f,scrnWidth )
+                .setDuration(10000);
+        rgtToLft = ObjectAnimator.ofFloat(view,"translationX",scrnWidth,0f )
+                .setDuration(10000);
+
+        animatorSet.play( lftToRgt ).before( topToBottom );
+        animatorSet.start();
+    }
+
+    void initUI(){
         view = (View) findViewById(R.id.widgetView);
         animatorSet = new AnimatorSet();
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 animatorSet.end();
-view.setBackgroundColor(Color.RED);
+                view.setBackgroundColor(Color.RED);
                 animateLeftRight();
             }
         });
     }
 
-    void animateTopBottom(long i){
-        // translationX to move object along y axis
-        // next values are position value
 
-        topToBottom = ObjectAnimator.ofFloat(view,"translationY",0f, screenHieght)
-                .setDuration(i); // top to bottom
-        bottomToTop = ObjectAnimator.ofFloat(view,"translationY", screenHieght,0f )
-                .setDuration(i); // bottom to top
-        animatorSet.play(topToBottom).before(bottomToTop);
-        animatorSet.start(); // play the animation
-
-    }
-
-
-    void animateLeftRight(){
-        // translationX to move object along x axis
-        // next values are position value
-        lftToRgt = ObjectAnimator.ofFloat(view,"translationX",0f,screenWidth )
-                .setDuration(10000); // to animate left to right
-        rgtToLft = ObjectAnimator.ofFloat(view,"translationX",screenWidth,0f )
-                .setDuration(10000); // to animate right to left
-
-        animatorSet.play( lftToRgt ).before( topToBottom ); // manage sequence
-        animatorSet.start(); // play the animation
-    }
 }
